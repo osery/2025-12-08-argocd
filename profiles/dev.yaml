@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: apps/root
+    repoURL: https://github.com/osery/2025-12-08-argocd
+    targetRevision: master
+    helm:
+      parameters:
+        - name: ArgoCD.Project
+          value: default
+        - name: ArgoCD.Profile
+          value: dev
+        - name: ArgoCD.Revision
+          value: $ARGOCD_APP_REVISION
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
